@@ -1,0 +1,14 @@
+# Ignore Python environment
+llm_rag_test_faiss/
+
+# Ignore secrets and environment files
+.env
+.streamlit/secrets.toml
+
+# Ignore Vector Database and ingestion code
+faiss_index/
+ingest.py
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
