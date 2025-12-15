@@ -3,8 +3,8 @@ import streamlit as st
 # Import the necessary components (Ensure these match your working configuration!) - they do!
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain_community.vectorstores import FAISS 
-from langchain_community.memory import ConversationSummaryBufferMemory
-from langchain.chains import ConversationalRetrievalChain
+from langchain.memory import ConversationSummaryBufferMemory
+from langchain_classic.chains import ConversationalRetrievalChain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import Document
 from datetime import datetime
