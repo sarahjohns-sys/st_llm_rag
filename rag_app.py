@@ -107,8 +107,10 @@ def setup_rag_chain():
     )
 
     # --- 4. Define Memory & RAG Chain ---
-    # Memory: ConversationSummaryBufferMemory(
-    llm=llm, # <-- REQUIRED: Used to create the summary
+# New memory (ConversationSummaryBufferMemory)
+# This requires the 'llm' object to be passed for summarization
+    memory = ConversationSummaryBufferMemory(
+        llm=llm, # <-- REQUIRED: Used to create the summary
         max_token_limit=500, # <-- REQUIRED: Summarizes when history exceeds 500 tokens
         memory_key="chat_history",
         return_messages=True,
