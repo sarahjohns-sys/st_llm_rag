@@ -5,10 +5,8 @@ llm_rag_test_faiss/
 .env
 .streamlit/secrets.toml
 
-# Ignore Vector Database and ingestion code
-faiss_index/
-ingest.py
-
 # Ignore compiled Python files
 __pycache__/
 *.pyc
+
+# Do NOT ignore ingest.py or faiss_index/
