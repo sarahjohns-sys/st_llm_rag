@@ -6,6 +6,54 @@ from langchain_community.vectorstores import FAISS
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain_classic.chains import ConversationalRetrievalChain 
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.schema import Document
+from datetime import datetime
+
+# --- 0. LONG TERM MEMORY VIA SEMI-AUTOMATIC JOURNALLING ---
+
+# You will need to make sure the LLM and the vectorstore objects are accessible.
+# Since they are inside @st.cache_resource, we'll pass them in or access them globally.
+
+def save_session_summary(llm, vectorstore, chat_history):
+    # 1. Format the conversation history into a single string
+    history_str = "\n".join([f"{msg.type}: {msg.content}" for msg in chat_history])
+
+    # 2. Define the Prompt for the LLM to summarize
+    # This is where Grok's suggestion of "Summarize the key insights..." comes in!
+    summary_prompt = f"""
+    Please analyze the following conversation history. Your task is to extract only the most important, high-level insights, key decisions, and critical emotional shifts related to the user's personal knowledge or life anchors.
+    DO NOT include simple Q&A. Focus on new, evolving knowledge.
+
+    Conversation History:
+    ---
+    {history_str}
+    ---
+    Generate a concise summary (max 500 words) suitable for saving as a permanent journal entry.
+    """
+
+    # 3. Call the LLM to generate the summary
+    summary = llm.invoke(summary_prompt).content
+    
+    if not summary:
+        return "No meaningful summary generated.", False
+
+    # 4. Create a LangChain Document with metadata
+    metadata = {
+        "source": "session_summary",
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "type": "session_summary",
+        "status": "active"
+    }
+    new_doc = Document(page_content=summary, metadata=metadata)
+
+    # 5. Add the new document (and its embedding) to the FAISS vector store
+    vectorstore.add_documents([new_doc])
+    
+    # 6. Crucial step: Save the updated FAISS index back to the disk
+    # This saves the changes permanently to the faiss_index/ folder
+    vectorstore.save_local("faiss_index", allow_dangerous_deserialization=True)
+
+    return f"Summary saved as new knowledge:\n\n{summary}", True
 
 
 # --- 1. CONFIGURATION AND INITIALIZATION ---
@@ -76,12 +124,19 @@ def setup_rag_chain():
         # NEW: Pass the custom prompt to the combine_docs_chain
         combine_docs_chain_kwargs={"prompt": CUSTOM_PROMPT}
     )
+    
     st.success("✅ RAG System Ready!")
-    return qa_chain
+       
+    # OLD RETURN: return qa_chain
+    # NEW RETURN: Return all three key components
+    # We are returning the chain, the llm, and the vectorstore
+    return qa_chain, llm, vectorstore
+    
+    
 
 # Initialize the RAG chain (only runs once thanks to @st.cache_resource)
 if 'qa_chain' not in st.session_state:
-    st.session_state.qa_chain = setup_rag_chain()
+    st.session_state.qa_chain, st.session_state.llm, st.session_state.vectorstore = setup_rag_chain()
     
 # Initialize chat history (for displaying conversation)
 if "messages" not in st.session_state:
@@ -125,3 +180,23 @@ if prompt := st.chat_input("Ask a question about your project history..."):
     with st.chat_message("assistant"):
         st.markdown(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
+
+if st.sidebar.button("💾 Save Session to Long-Term Memory"):
+    # Access the components from session state
+    llm = st.session_state.llm
+    vectorstore = st.session_state.vectorstore 
+    
+    current_chat_history = st.session_state.qa_chain.memory.buffer # Access the memory directly
+    
+    # Call the save function
+    with st.spinner("Analyzing conversation and saving to FAISS..."):
+        message, success = save_session_summary(llm, vectorstore, current_chat_history)
+        
+    if success:
+        st.success("✅ New knowledge successfully added to the database! Chat history cleared for new session.")
+        st.session_state.messages = []
+    else:
+        st.error(message)
+    
+
+
