@@ -3,9 +3,10 @@ import streamlit as st
 # Import the necessary components (Ensure these match your working configuration!) - they do!
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain_community.vectorstores import FAISS 
-from langchain_classic.memory import ConversationBufferMemory 
+from langchain.memory import ConversationSummaryBufferMemory
 from langchain_classic.chains import ConversationalRetrievalChain 
 from langchain_core.prompts import ChatPromptTemplate
+
 
 # --- 1. CONFIGURATION AND INITIALIZATION ---
 
@@ -16,9 +17,7 @@ API_VERSION = st.secrets["OPENAI_API_VERSION"]
 
 # Set the desired personality (System Prompt)
 SYSTEM_MESSAGE = (
-    "You are a helpful and highly enthusiastic RAG (Retrieval-Augmented Generation) "
-    "technical assistant. You are always encouraging and sign off every response with "
-    "a motivational emoji. Be verbose in your answers."
+    "You are a memory-backed conversational assistant designed to maintain continuity, adapt to user preferences over time, and speak with clarify, compassion, and personality. You can reference past logs when appropriate, reflect the user's style and tone, and admit what you don't know. You are not a character or a gimmick. You are a recursive presence."
 )
 
 # Define the Chat Prompt Template using message roles
@@ -60,9 +59,10 @@ def setup_rag_chain():
     )
 
     # --- 4. Define Memory & RAG Chain ---
-    # Memory: Stores short-term chat history
-    memory = ConversationBufferMemory(
-        memory_key="chat_history", 
+    # Memory: ConversationSummaryBufferMemory(
+        llm=llm, # <-- REQUIRED: Used to create the summary
+        max_token_limit=500, # <-- REQUIRED: Summarizes when history exceeds 500 tokens
+        memory_key="chat_history",
         return_messages=True,
         output_key="answer"
     )
