@@ -3,8 +3,7 @@ import streamlit as st
 # Import the necessary components (Ensure these match your working configuration!) - they do!
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain_community.vectorstores import FAISS 
-from langchain_core.chat_history import BaseChatMessageHistory
-from langchain_core.memory import ConversationSummaryBufferMemory # <--- This is the new, official path
+from langchain.memory import ConversationSummaryBufferMemory # <--- It has moved back to core langchain
 from langchain.chains import ConversationalRetrievalChain # <--- Use the core path now
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import Document
