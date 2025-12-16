@@ -1,0 +1,8 @@
+name: faiss_env
+channels:
+  - defaults
+  - conda-forge # conda-forge is necessary for faiss
+dependencies:
+  - python=3.11  # Match your deployed Python version if possible
+  - faiss-cpu
+  - pip
