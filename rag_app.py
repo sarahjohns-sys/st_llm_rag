@@ -1,8 +1,11 @@
 import streamlit as st
 
 # Import the necessary components (Ensure these match your working configuration!) - they do!
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI # Temporary fix for cloud deployment
-from langchain_community.vectorstores.faiss import FAISS # Trying again, again.
+from langchain_core.embeddings import Embeddings # Stable base class for embeddings
+from langchain_core.language_models import BaseChatModel # Stable base class for chat models
+from langchain_community.embeddings import AzureOpenAIEmbeddings # Try this community path
+from langchain_community.chat_models import AzureChatOpenAI # Try this community path
+from langchain_community.vectorstores import FAISS # Try this path one final time, again
 from langchain.memory import ConversationSummaryBufferMemory # <--- It has moved back to core langchain
 from langchain.chains import ConversationalRetrievalChain # <--- Use the core path now
 from langchain_core.prompts import ChatPromptTemplate
