@@ -1,11 +1,15 @@
 import streamlit as st
 from datetime import datetime
+
+# Core Azure and Vector bits
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain_community.vectorstores import FAISS 
-from langchain.memory import ConversationSummaryBufferMemory
-from langchain.chains import ConversationalRetrievalChain 
+from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
+
+# The "Troublemakers" - Updated paths for LangChain 0.3.x
+from langchain.memory.summary_buffer import ConversationSummaryBufferMemory
+from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
 
 # --- 0. LONG TERM MEMORY FUNCTION ---
 def save_session_summary(llm, vectorstore, chat_history):
