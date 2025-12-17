@@ -1,11 +1,12 @@
 import streamlit as st
-from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI 
+from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain_community.vectorstores import FAISS 
-from langchain.memory import ConversationSummaryBufferMemory 
-from langchain.chains import ConversationalRetrievalChain 
+from langchain.memory import ConversationSummaryBufferMemory
+from langchain_classic.chains import ConversationalRetrievalChain 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import Document
 from datetime import datetime
+
 
 # --- 0. LONG TERM MEMORY VIA SEMI-AUTOMATIC JOURNALLING ---
 
