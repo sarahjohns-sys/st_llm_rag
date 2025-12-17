@@ -1,6 +1,4 @@
 import streamlit as st
-
-# Import the necessary components (Ensure these match your working configuration!) - they do!
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI # Trying again
 from langchain_core.language_models import BaseChatModel # Stable base class for chat models
 from langchain_community.chat_models import AzureChatOpenAI # Try this community path
