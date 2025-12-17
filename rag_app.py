@@ -5,8 +5,6 @@ from langchain_community.vectorstores import FAISS
 from langchain_classic.memory import ConversationBufferMemory 
 from langchain_classic.chains import ConversationalRetrievalChain 
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.schema import Document
-from datetime import datetime
 
 
 # --- 0. LONG TERM MEMORY VIA SEMI-AUTOMATIC JOURNALLING ---
