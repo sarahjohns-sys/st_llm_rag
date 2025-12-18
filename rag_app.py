@@ -1,16 +1,15 @@
 import streamlit as st
 from datetime import datetime
 
-# Core Azure & Vector bits
+# Azure bits
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
 
-# THE NEW 2025 PATHS:
-# We use 'langchain.memory' but we must ensure the package 'langchain' is version 1.x
-from langchain.memory import ConversationSummaryBufferMemory
-from langchain.chains import ConversationalRetrievalChain
+# Version 1.x compatible I think?
+from langchain_classic.memory import ConversationSummaryBufferMemory
+from langchain_classic.chains import ConversationalRetrievalChain
 
 # --- 0. LONG TERM MEMORY FUNCTION ---
 def save_session_summary(llm, vectorstore, chat_history):
