@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: langchain-openai
-Version: 1.1.4
+Version: 1.1.5
 Summary: An integration package connecting OpenAI and LangChain
 Project-URL: Homepage, https://docs.langchain.com/oss/python/integrations/providers/openai
 Project-URL: Documentation, https://reference.langchain.com/python/integrations/langchain_openai/
@@ -12,7 +12,7 @@ Project-URL: Reddit, https://www.reddit.com/r/LangChain/
 License: MIT
 License-File: LICENSE
 Requires-Python: <4.0.0,>=3.10.0
-Requires-Dist: langchain-core<2.0.0,>=1.2.1
+Requires-Dist: langchain-core<2.0.0,>=1.2.2
 Requires-Dist: openai<3.0.0,>=1.109.1
 Requires-Dist: tiktoken<1.0.0,>=0.7.0
 Description-Content-Type: text/markdown
