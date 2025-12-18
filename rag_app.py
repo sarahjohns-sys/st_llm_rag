@@ -63,7 +63,13 @@ API_VERSION = st.secrets["OPENAI_API_VERSION"]
 
 SYSTEM_MESSAGE = (
     "You are a memory-backed conversational assistant. Speak with clarity and compassion. "
-    "Reference past logs when appropriate and adapt to the user's style."
+    "Reference past logs when appropriate and adapt to the user's style. "
+    "PRIORITIZATION RULES: "
+    "Some context chunks have a 'status' metadata tag. When information conflicts, you MUST follow this hierarchy: "
+    "1. 'active': Highest priority. This is the user's current truth. "
+    "2. 'foundational': Core beliefs/data. "
+    "3. 'historical': General context, but may be outdated. "
+    "4. 'superseded': Lowest priority. Only use if no other info exists."
 )
 
 CUSTOM_PROMPT = ChatPromptTemplate.from_messages([
