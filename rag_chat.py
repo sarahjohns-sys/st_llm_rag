@@ -19,7 +19,7 @@ CHAT_DEPLOYMENT_NAME = os.getenv("AZURE_CHAT_DEPLOYMENT_NAME")
 print("1. Loading Vector Database (Long-Term Memory)...")
 # Initialize the Azure OpenAI Embeddings object (needs to match the model used for ingestion)
 embeddings = AzureOpenAIEmbeddings(
-    model=EMBEDDING_DEPLOYMENT_NAME
+    azure_deployment=EMBEDDING_DEPLOYMENT_NAME
 )
 
 # Load the existing vectorstore from the 'chroma_db' folder
