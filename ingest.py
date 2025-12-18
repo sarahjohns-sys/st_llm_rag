@@ -5,6 +5,8 @@ from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
+from langchain_community.document_loaders import JSONLoader
+
 
 # 1. Load environment variables
 load_dotenv()
@@ -13,9 +15,14 @@ load_dotenv()
 EMBEDDING_DEPLOYMENT_NAME = os.getenv("AZURE_EMBEDDING_DEPLOYMENT_NAME")
 
 # --- A. LOAD ---
-print("1. Loading text file...")
-# Load our simple text file
-loader = TextLoader("chat_memory.txt")
+print("1. Loading the JSON file...")
+# Load the JSON
+loader = JSONLoader(
+    file_path="anchors_corpus.jsonl",
+    jq_schema='.content',  # This grabs the text
+    text_content=False,    # Ensures content goes to page_content, not metadata
+    metadata_func=lambda x: x["metadata"]
+)
 documents = loader.load()
 
 # --- B. SPLIT (Chunking) ---
@@ -45,8 +52,6 @@ embeddings = AzureOpenAIEmbeddings(
 )
 
 # Create the Vector Store (this performs the embedding and saves the database locally)
-# persist_directory='chroma_db' creates a folder to save the database on your disk
-# Replace it with this FAISS logic:
 vectorstore = FAISS.from_documents(
     documents=chunks,
     embedding=embeddings
