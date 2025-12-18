@@ -1,2 +1,0 @@
-# libopenblas-dev
-# libomp-dev

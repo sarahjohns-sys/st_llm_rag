@@ -150,6 +150,8 @@ if prompt := st.chat_input("Ask about your history..."):
 if st.sidebar.button("💾 Save Session to Long-Term Memory"):
     llm = st.session_state.llm
     vectorstore = st.session_state.vectorstore 
+    
+    # This is the 'raw' history the LLM uses to summarize
     current_chat_history = st.session_state.qa_chain.memory.buffer 
     
     with st.spinner("Saving to FAISS..."):
@@ -157,7 +159,14 @@ if st.sidebar.button("💾 Save Session to Long-Term Memory"):
         
     if success:
         st.success("✅ Knowledge saved! Session cleared.")
-        st.session_state.messages = []
-        st.session_state.qa_chain.memory.clear() # Clear the short-term memory too
+        
+        # 1. Clear the UI list
+        st.session_state.messages = [] 
+        
+        # 2. CLEAR THE RAG CHAIN MEMORY (This is what was missing)
+        st.session_state.qa_chain.memory.clear() 
+        
+        # Optional: Rerun to refresh the UI immediately
+        st.rerun()
     else:
-        st.error(summary_text)
+        st.error(f"Failed to save: {summary_text}")

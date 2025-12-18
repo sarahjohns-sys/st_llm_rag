@@ -1,6 +1,8 @@
 streamlit
-langchain
+langchain>=1.2.0
 langchain-openai
+langchain-classic
 langchain-community
 langchain-core
 faiss-cpu
+numpy<2.0.0
