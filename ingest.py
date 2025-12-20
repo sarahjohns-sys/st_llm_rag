@@ -28,6 +28,14 @@ def extract_metadata(record, metadata):
     # Get the inner metadata dictionary from your file
     inner_meta = record.get("metadata", {})
     
+    # If tags exist as a list, convert them to a comma-separated string
+    # This makes them easier for some filters to handle
+    if "tags" in inner_meta and isinstance(inner_meta["tags"], list):
+        inner_meta["tags_str"] = ", ".join(inner_meta["tags"])
+    
+    metadata.update(inner_meta)
+    return metadata
+    
     # Merge them together
     metadata.update(inner_meta)
     return metadata
