@@ -93,7 +93,7 @@ def setup_rag_chain():
     if "status_filter" in st.session_state and st.session_state.status_filter != "All":
         search_kwargs["filter"] = {"status": st.session_state.status_filter.lower()}
 
-retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
+    retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
 
     # Load LLM
     llm = AzureChatOpenAI(
