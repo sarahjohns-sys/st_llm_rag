@@ -89,7 +89,11 @@ def setup_rag_chain():
         embeddings, 
         allow_dangerous_deserialization=True
     )
-    retriever = vectorstore.as_retriever()
+    search_kwargs = {}
+    if "status_filter" in st.session_state and st.session_state.status_filter != "All":
+        search_kwargs["filter"] = {"status": st.session_state.status_filter.lower()}
+
+retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
 
     # Load LLM
     llm = AzureChatOpenAI(
@@ -153,6 +157,15 @@ if prompt := st.chat_input("Ask about your history..."):
     st.session_state.messages.append({"role": "assistant", "content": response})
 
 # --- 4. SIDEBAR ACTIONS ---
+st.sidebar.title("Search Controls")
+status_options = ["All", "Active", "Foundational", "Historical", "Superseded"]
+st.session_state.status_filter = st.sidebar.selectbox("Filter by Status:", status_options)
+
+if st.sidebar.button("Update Filter"):
+    # This force-reloads the chain with the new filter
+    st.cache_resource.clear()
+    st.rerun()
+
 if st.sidebar.button("💾 Save Session to Long-Term Memory"):
     llm = st.session_state.llm
     vectorstore = st.session_state.vectorstore 
