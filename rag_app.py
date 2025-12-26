@@ -128,8 +128,8 @@ def setup_rag_chain():
     # Load LLM
     llm = AzureChatOpenAI(
         azure_deployment=CHAT_DEPLOYMENT_NAME,
-        model_name="gpt-4o-mini",
-        temperature=0.7,
+        model_name="gpt-4o",
+        temperature=1.0,
         openai_api_version=API_VERSION
     )
 
