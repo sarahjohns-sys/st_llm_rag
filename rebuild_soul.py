@@ -41,4 +41,4 @@ def rebuild_index(directory_path):
         vectorstore.save_local("faiss_index")
         print(f"✅ Soul Rebuilt! {len(all_docs)} anchors integrated.")
 
-rebuild_index("/home/sarahjohns/llm_rag_test/faiss_index") # Updated to actual folder path
+rebuild_index("./faiss_index") # Updated to actual folder path
