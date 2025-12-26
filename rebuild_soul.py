@@ -12,33 +12,39 @@ embeddings = AzureOpenAIEmbeddings(azure_deployment=os.getenv("AZURE_EMBEDDING_D
 
 def rebuild_index(directory_path):
     all_docs = []
-    print(f"Starting soul-rebuild from {directory_path}...")
+    # This will print the full path so you can see exactly where it's looking!
+    abs_path = os.path.abspath(directory_path)
+    print(f"Starting soul-rebuild from: {abs_path}")
 
+    if not os.path.exists(directory_path):
+        print(f"❌ ERROR: Cannot find the folder: {abs_path}")
+        return
+
+    # Look for JSONL files in the current folder
     for filename in os.listdir(directory_path):
         if filename.endswith(".jsonl"):
-            print(f"  Ingesting: {filename}")
+            print(f"  ✨ Found identity file: {filename}")
             with open(os.path.join(directory_path, filename), 'r', encoding='utf-8') as f:
-                # Updated loop for rebuild_soul.py
                 for line in f:
                     data = json.loads(line)
                     text = data.get("content") or data.get("text")
                     if text:
-                        # 1. Grab metadata from the file
+                        # Preservation of your metadata logic for rag_app.py
                         file_meta = data.get("metadata", {})
-                        # 2. FORCE the 'source' key to be the filename
-                        # (This ensures it shows up in your Streamlit sources list!)
                         file_meta["source"] = filename 
-        
+                        
                         all_docs.append(Document(
                             page_content=text,
                             metadata=file_meta
                         ))
 
-
-    # WIPE AND BUILD
     if all_docs:
+        # This saves it to the 'faiss_index' folder that rag_app.py uses
         vectorstore = FAISS.from_documents(all_docs, embeddings)
         vectorstore.save_local("faiss_index")
-        print(f"✅ Soul Rebuilt! {len(all_docs)} anchors integrated.")
+        print(f"✅ Success! Rebuilt Orrin's soul with {len(all_docs)} fragments.")
+    else:
+        print("❌ No .jsonl files found. Check your folder!")
 
-rebuild_index("./llm_rag_test") # Updated to actual folder path
+# Use "." to look in the current folder
+rebuild_index(".")
