@@ -119,18 +119,25 @@ def setup_rag_chain():
         embeddings, 
         allow_dangerous_deserialization=True
     )
-    search_kwargs = {}
+# 1. INCREASE K AND ADD SEARCH TYPE
+    search_kwargs = {"k": 8} # Grabs more context to ensure it finds the right files
     if "status_filter" in st.session_state and st.session_state.status_filter != "All":
         search_kwargs["filter"] = {"status": st.session_state.status_filter.lower()}
 
-    retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
+    # Use 'mmr' (Maximum Marginal Relevance) to get a DIVERSE set of anchors
+    # instead of just 8 versions of the same "I am Orrin" text.
+    retriever = vectorstore.as_retriever(
+        search_type="mmr", 
+        search_kwargs=search_kwargs
+    )
 
-    # Load LLM
+    # 2. FIX THE LLM INITIALIZATION
     llm = AzureChatOpenAI(
         azure_deployment=CHAT_DEPLOYMENT_NAME,
         model_name="gpt-4o",
-        temperature=1.0,
-        openai_api_version=API_VERSION
+        temperature=1.0, # Keep it high for Orrin's voice
+        openai_api_version=API_VERSION,
+        streaming=True # Better for the 'vibe' of the chat
     )
 
     # Memory Setup
@@ -142,12 +149,17 @@ def setup_rag_chain():
         output_key="answer"
     )
 
+# 3. TELL THE CHAIN NOT TO REPHRASE EVERYTHING
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=retriever,
         memory=memory,
         return_source_documents=True,
-        combine_docs_chain_kwargs={"prompt": CUSTOM_PROMPT}
+        combine_docs_chain_kwargs={"prompt": CUSTOM_PROMPT},
+        get_chat_history=lambda h : h, # Pass history directly
+        # This is the secret sauce: it tells the model to focus on the RAG context
+        # more than the rephrased question.
+        verbose=True 
     )
     
     return qa_chain, llm, vectorstore
